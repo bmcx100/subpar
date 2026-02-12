@@ -8,6 +8,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Check } from "lucide-react";
 import { normalizeStrengthWeightToKg } from "@/lib/core-logic";
 import { saveStrengthSession } from "./actions";
@@ -158,6 +164,7 @@ export function StrengthLoggerClient({
   const [sessionNotes, setSessionNotes] = useState("");
   const [currentFlowIndex, setCurrentFlowIndex] = useState(0);
   const [showSessionNotes, setShowSessionNotes] = useState(false);
+  const [showIncompleteDialog, setShowIncompleteDialog] = useState(false);
   const activeCardRef = useRef<HTMLDivElement>(null);
 
   // Compute set counts per exercise: history > routine target > default
@@ -228,6 +235,18 @@ export function StrengthLoggerClient({
     });
   }
 
+  function findFirstIncompleteStep(): number | null {
+    for (let i = 0; i < flowSteps.length; i++) {
+      const step = flowSteps[i];
+      // Skip the current step since we're about to mark it complete
+      if (i === currentFlowIndex) continue;
+      if (!exerciseSets[step.exerciseId][step.setIndex]?.completed) {
+        return i;
+      }
+    }
+    return null;
+  }
+
   function handleSetComplete() {
     if (!currentStep) return;
 
@@ -238,8 +257,28 @@ export function StrengthLoggerClient({
     if (!isLastStep) {
       setCurrentFlowIndex((i) => i + 1);
     } else {
-      setShowSessionNotes(true);
+      // Last step — check if anything was skipped
+      const incompleteIdx = findFirstIncompleteStep();
+      if (incompleteIdx !== null) {
+        setShowIncompleteDialog(true);
+      } else {
+        // Everything done — save and go
+        handleFinish();
+      }
     }
+  }
+
+  function handleStayOnIncomplete() {
+    setShowIncompleteDialog(false);
+    const incompleteIdx = findFirstIncompleteStep();
+    if (incompleteIdx !== null) {
+      setCurrentFlowIndex(incompleteIdx);
+    }
+  }
+
+  function handleGoFromIncomplete() {
+    setShowIncompleteDialog(false);
+    handleFinish();
   }
 
   function handleNextExercise() {
@@ -365,6 +404,35 @@ export function StrengthLoggerClient({
           />
         )}
       </div>
+
+      {/* Incomplete sets dialog */}
+      <Dialog open={showIncompleteDialog} onOpenChange={setShowIncompleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>You have incomplete sets</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Some sets were skipped. Do you want to go back and finish them?
+          </p>
+          <div className="flex gap-2 pt-2">
+            <Button
+              variant="secondary"
+              className="flex-1"
+              size="lg"
+              onClick={handleGoFromIncomplete}
+            >
+              Go
+            </Button>
+            <Button
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+              size="lg"
+              onClick={handleStayOnIncomplete}
+            >
+              Stay
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Fixed Bottom Buttons */}
       <div className="fixed bottom-16 left-0 right-0 z-40 border-t bg-background px-4 pt-2 pb-2">

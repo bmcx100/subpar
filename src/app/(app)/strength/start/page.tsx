@@ -12,7 +12,15 @@ export default async function StrengthStartPage() {
     include: {
       days: {
         orderBy: { orderIndex: "asc" },
-        select: { id: true, label: true, orderIndex: true },
+        select: {
+          id: true,
+          label: true,
+          orderIndex: true,
+          entries: {
+            orderBy: { orderIndex: "asc" },
+            select: { exercise: { select: { name: true } } },
+          },
+        },
       },
     },
   });
@@ -49,9 +57,16 @@ export default async function StrengthStartPage() {
     }
   }
 
+  const days = routine.days.map((d) => ({
+    id: d.id,
+    label: d.label,
+    orderIndex: d.orderIndex,
+    exercises: d.entries.map((e) => e.exercise.name),
+  }));
+
   return (
     <StrengthStartClient
-      days={routine.days}
+      days={days}
       defaultDayIndex={nextDayIndex}
     />
   );
