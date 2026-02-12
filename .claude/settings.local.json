@@ -20,7 +20,11 @@
       "Bash(node -e:*)",
       "Bash(npx tsx:*)",
       "Bash(del \"D:\\\\1 Projects\\\\WebDev\\\\subpar\\\\scripts\\\\query-db.ts\")",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(set \"DATABASE_URL=postgresql://postgres:Saps4Supa!!!@db.arikhllpwenxurjqjjnh.supabase.co:5432/postgres\")",
+      "Bash(npx prisma db push:*)",
+      "Bash(npx cross-env:*)",
+      "Bash(ping:*)"
     ]
   }
 }

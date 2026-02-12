@@ -15,16 +15,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       name: "Dev Login",
       credentials: {},
       async authorize() {
-        // Find or create a dev user
-        let user = await prisma.user.findUnique({
-          where: { email: DEV_USER.email },
-        });
-        if (!user) {
-          user = await prisma.user.create({
-            data: DEV_USER,
+        try {
+          // Find or create a dev user
+          let user = await prisma.user.findUnique({
+            where: { email: DEV_USER.email },
           });
+          if (!user) {
+            user = await prisma.user.create({
+              data: DEV_USER,
+            });
+          }
+          return user;
+        } catch (error) {
+          console.error("[auth] authorize error:", error);
+          throw error;
         }
-        return user;
       },
     }),
   ],
