@@ -1,0 +1,1117 @@
+UX Wireframe Breakdown (MVP)
+
+Mobile-first. Clean. Large typography. Minimal taps.
+
+1️⃣ Dashboard (Home)
+Top Section
+
+Driver Max Card
+
+Big number (e.g., 108.4 mph)
+
+Label: “All-Time PR”
+
+Subtext: “Last 7 best: 105.9”
+
+Subtext: “Last 7 = 18 days”
+
+Light Normal (Dominant) Card
+
+Same structure (smaller visual weight than Driver)
+
+Middle
+
+Primary Buttons:
+
+Start Golf Session
+
+Start Strength Session
+
+Bottom
+
+Recent Golf Sessions (last 3)
+
+Recent Strength Sessions (last 3)
+
+2️⃣ Golf – Start Session
+
+Simple screen:
+
+Protocol: “SuperSpeed Level 1”
+
+Button: Begin Guided Session
+
+3️⃣ Golf – Guided Logger
+Header
+
+Block Label:
+
+NORMAL
+
+STEP
+
+MAX NORMAL
+
+DRIVER
+
+Progress indicator:
+5 / 15
+
+Main Area
+
+Big text:
+Light – Dominant
+
+Large numeric display:
+103.2 mph
+
+Numeric keypad:
+
+1 2 3
+4 5 6
+7 8 9
+. 0 ⌫
+
+
+Buttons:
+
+Save
+
+Skip
+
+After Save:
+
+Button appears: Start 60s Rest
+
+Countdown replaces button
+
+Ends with sound + vibration
+
+Auto-advance to next item
+
+4️⃣ Golf – Session Complete
+
+Summary:
+
+Driver Max highlighted
+
+Light Normal Dominant highlighted
+
+Other entries listed smaller
+
+Buttons:
+
+Done
+
+View History
+
+5️⃣ Golf – History
+
+List format:
+
+Date
+
+Driver Max
+
+Light Normal Dominant
+
+Tap → Session detail screen.
+
+6️⃣ Strength – Routine Builder
+Top
+
+Sessions per week (number input)
+
+Day labels:
+
+Day A (editable)
+
+Day B
+
+Day C
+
+Per Day
+
+Exercise list:
+
+Add Exercise (modal with search)
+
+Reorder
+
+Remove
+
+7️⃣ Strength – Start Session
+
+Default:
+
+“Next: Day B”
+
+Option:
+
+Change Day
+
+Button:
+
+Begin Session
+
+8️⃣ Strength – Logger
+
+For each exercise:
+
+Exercise Name
+Suggested Next Weight:
+Next: 135 lb
+
+3 set rows:
+
+Set 1: Weight | Reps
+Set 2: Weight | Reps
+Set 3: Weight | Reps
+
+
+Auto-fill weight from last session.
+
+After final set:
+
+Mark Exercise Complete
+
+After all exercises:
+
+Finish Session
+
+9️⃣ Settings
+
+Sections:
+
+Units
+
+lb / kg toggle
+
+Progression
+
+Increment lb
+
+Increment kg
+
+Timer
+
+Sound toggle
+
+Vibration toggle
+
+UX Philosophy
+
+Large typography
+
+No clutter
+
+1 primary action per screen
+
+Minimal taps
+
+Data-first presentation
+
+If you want, next we can define:
+
+Component map (shadcn components per screen)
+
+Exact user journey from signup to first logged session
+
+Or visual hierarchy refinements for a premium SaaS feel
+
+components
+Component map (shadcn/ui + custom) by screen
+Shared layout
+
+AppShell
+
+TopNav (mobile): Sheet menu + title + UserMenu
+
+Container
+
+BottomNav (mobile): Tabs-style (Dashboard / Golf / Strength / Settings)
+
+shadcn/ui used: Sheet, Button, DropdownMenu, Separator
+
+1) Dashboard
+
+MetricCard (Driver Max, Light Normal D)
+
+Card, CardHeader, CardContent
+
+Badge (e.g., “All-time PR”)
+
+QuickActionButtons
+
+Button (primary/secondary)
+
+RecentSessionsList
+
+Tabs (Golf / Strength)
+
+SessionRow (custom)
+
+Card or Table (mobile list style)
+
+shadcn/ui: Card, Button, Badge, Tabs
+
+2) Golf Start
+
+ProtocolCard (only one for now)
+
+Card + Button
+
+shadcn/ui: Card, Button
+
+3) Golf Guided Logger
+
+GolfBlockHeader
+
+block label (Normal/Step/Max/Driver)
+
+progress: Progress or custom text
+
+NextItemCard
+
+big label + side badge
+
+Card
+
+SpeedDisplay
+
+large value text
+
+NumericKeypad
+
+grid of Buttons
+
+keys: 0–9, ., ⌫
+
+EntryActions
+
+Button: Save
+
+Button: Skip (outline/destructive-lite)
+
+RestTimerPanel
+
+state: idle (“Start 60s Rest”) → running countdown → complete
+
+uses Progress bar optionally
+
+ToastPR
+
+show “PR!” toast when applicable
+
+shadcn/ui: Card, Button, Progress, Badge, Toast (sonner), Separator
+
+4) Golf Session Summary
+
+SessionSummaryHeader
+
+date/time + duration (optional later)
+
+HighlightedMetrics
+
+MetricCard x2 (Driver Max, Light Normal D)
+
+AllEntriesList
+
+grouped by block: Normal / Step / Max / Driver
+
+Accordion per block
+
+EntryRow (label + value)
+
+shadcn/ui: Card, Accordion, Badge, Button
+
+5) Golf History
+
+FilterBar (later; optional)
+
+SessionList
+
+Card list or Table on desktop
+
+each row: date, Driver Max, Light Normal D, chevron
+
+EmptyState
+
+shadcn/ui: Card, Button
+
+6) Routine Builder
+
+RoutineHeaderForm
+
+sessions/week: Input (number) + Label
+
+routine name: Input (optional)
+
+RoutineDaysEditor
+
+DayCard x3
+
+label: Input
+
+exercises list: SortableList (custom; dnd-kit)
+
+AddExerciseButton
+
+ExercisePickerDialog
+
+Dialog
+
+search: Input
+
+list: Command + CommandItem
+
+add custom: inline button
+
+shadcn/ui: Card, Input, Label, Button, Dialog, Command, Separator
+
+7) Strength Start Session
+
+NextDayCard
+
+shows “Next: Day B”
+
+Button “Change day”
+
+SelectDayDialog
+
+Dialog + RadioGroup or Command
+
+BeginButton
+
+shadcn/ui: Card, Dialog, RadioGroup, Button
+
+8) Strength Logger
+
+StrengthSessionHeader
+
+day label + date
+
+ExerciseLogCard (one per exercise)
+
+title + suggested next weight Badge
+
+SetRow x3
+
+weight input: Input
+
+reps input: Input
+
+AutoFillControls (optional small)
+
+“Use last session weights”
+
+FinishSessionBar (sticky bottom)
+
+Button Finish
+
+shadcn/ui: Card, Input, Badge, Button, Separator
+
+9) Settings
+
+SettingsSection (custom wrapper)
+
+Units toggle: Tabs or RadioGroup
+
+Increment inputs: Input
+
+Timer toggles: Switch
+
+SaveToast feedback
+
+shadcn/ui: Card, RadioGroup, Switch, Input, Label, Toast
+
+Key custom components (you’ll actually build)
+
+MetricCard
+
+SessionRow
+
+NumericKeypad
+
+RestTimerPanel
+
+EntryRow
+
+SortableList (dnd-kit)
+
+ExerciseLogCard / SetRow
+
+Prisma format:
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum WeightUnit {
+  LB
+  KG
+}
+
+enum SubscriptionStatus {
+  trial
+  active
+  past_due
+  canceled
+}
+
+enum GolfBlock {
+  NORMAL
+  STEP
+  MAX_NORMAL
+  DRIVER
+}
+
+enum GolfStick {
+  LIGHT
+  MEDIUM
+  HEAVY
+  DRIVER
+}
+
+enum Side {
+  DOMINANT
+  NON_DOMINANT
+}
+
+// --------------------
+// Auth.js / NextAuth models (Prisma Adapter compatible)
+// --------------------
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String?  @unique
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // App settings / SaaS placeholders
+  weightUnit         WeightUnit         @default(LB)
+  incrementLb        Decimal            @default(5.0)  @db.Decimal(5, 2)
+  incrementKg        Decimal            @default(2.5)  @db.Decimal(5, 2)
+  timerSound         Boolean            @default(true)
+  timerVibrate       Boolean            @default(true)
+  subscriptionStatus SubscriptionStatus @default(trial)
+
+  accounts Account[]
+  sessions Session[]
+
+  golfSessions     GolfSession[]
+  routines         Routine[]
+  exercisesCreated Exercise[] @relation("ExercisesCreatedByUser")
+  strengthSessions StrengthSession[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// --------------------
+// Golf (SuperSpeed Level 1 MVP)
+// --------------------
+
+model GolfSession {
+  id          String   @id @default(cuid())
+  userId      String
+  performedAt DateTime @default(now())
+  notes       String?
+
+  user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  values GolfValue[]
+
+  @@index([userId, performedAt])
+}
+
+model GolfValue {
+  id        String    @id @default(cuid())
+  sessionId String
+  block     GolfBlock
+  stick     GolfStick
+  side      Side
+
+  // Store mph to 1 decimal place as tenths integer (e.g., 102.3 -> 1023)
+  speedMphTenths Int
+
+  session GolfSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  // Prevent duplicate entries for a given category in a session
+  @@unique([sessionId, block, stick, side])
+}
+
+// --------------------
+// Strength: routines + sessions
+// --------------------
+
+model Routine {
+  id              String   @id @default(cuid())
+  userId          String
+  name            String   @default("My Routine")
+  sessionsPerWeek Int      @default(3)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  days RoutineDay[]
+
+  @@index([userId])
+}
+
+model RoutineDay {
+  id         String   @id @default(cuid())
+  routineId  String
+  orderIndex Int
+  label      String   @default("Day")
+
+  routine  Routine              @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  entries  RoutineDayExercise[]
+  sessions StrengthSession[]
+
+  @@index([routineId, orderIndex])
+  @@unique([routineId, orderIndex])
+}
+
+model Exercise {
+  id              String   @id @default(cuid())
+  name            String
+  isDefault       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  createdByUserId String?
+  createdByUser   User?    @relation("ExercisesCreatedByUser", fields: [createdByUserId], references: [id], onDelete: SetNull)
+
+  routineEntries RoutineDayExercise[]
+  strengthSets   StrengthSet[]
+
+  @@index([name])
+  @@index([createdByUserId])
+  // Prevent duplicates for a user's custom exercises; defaults have createdByUserId = null
+  @@unique([createdByUserId, name])
+}
+
+model RoutineDayExercise {
+  id           String @id @default(cuid())
+  routineDayId String
+  exerciseId   String
+  orderIndex   Int
+
+  routineDay RoutineDay @relation(fields: [routineDayId], references: [id], onDelete: Cascade)
+  exercise   Exercise   @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@index([routineDayId, orderIndex])
+  @@unique([routineDayId, exerciseId])
+}
+
+model StrengthSession {
+  id           String   @id @default(cuid())
+  userId       String
+  routineDayId String?
+  performedAt  DateTime @default(now())
+  notes        String?
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  routineDay RoutineDay? @relation(fields: [routineDayId], references: [id], onDelete: SetNull)
+  sets       StrengthSet[]
+
+  @@index([userId, performedAt])
+  @@index([routineDayId])
+}
+
+model StrengthSet {
+  id                String  @id @default(cuid())
+  strengthSessionId String
+  exerciseId        String
+  setIndex          Int
+
+  // Store normalized weight in kg; convert for display based on user setting
+  weightKg Decimal @db.Decimal(8, 3)
+  reps     Int
+  notes    String?
+
+  strengthSession StrengthSession @relation(fields: [strengthSessionId], references: [id], onDelete: Cascade)
+  exercise        Exercise        @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@index([strengthSessionId])
+  @@index([exerciseId])
+  @@unique([strengthSessionId, exerciseId, setIndex])
+}
+
+suggested Core progression + PR algorithms written in TypeScript
+// core-logic.ts
+// Core progression + PR algorithms (TypeScript, framework-agnostic)
+// Assumptions:
+// - Golf speeds stored as "tenths mph" integer (e.g., 102.3 mph => 1023).
+// - Strength weights stored in kg (Decimal in DB); in app code use number for calculations.
+// - You will fetch the needed rows from DB and pass them into these pure functions.
+
+// -----------------------------
+// Types
+// -----------------------------
+
+export type WeightUnit = "LB" | "KG";
+
+export type GolfMetricKey =
+  | "DRIVER_MAX_DOMINANT"
+  | "LIGHT_NORMAL_DOMINANT";
+
+export type GolfValue = {
+  performedAt: Date;
+  // mph * 10 as integer
+  speedMphTenths: number;
+};
+
+export type GolfSessionMetrics = {
+  sessionId: string;
+  performedAt: Date;
+
+  // mph*10; optional because skipping is allowed
+  driverMaxDominant?: number;
+  lightNormalDominant?: number;
+};
+
+export type GolfPRSummary = {
+  metric: GolfMetricKey;
+
+  // All-time
+  allTimeBestTenths: number | null;
+  allTimeBestDate: Date | null;
+
+  // Last N sessions that contain that metric
+  lastN: {
+    n: number;
+    includedSessions: number; // how many sessions had the metric
+    bestTenths: number | null;
+    bestDate: Date | null;
+    spanDays: number | null; // days from oldest to newest among included sessions
+  };
+};
+
+export type StrengthSet = {
+  exerciseId: string;
+  performedAt: Date;
+
+  // normalized kg
+  weightKg: number;
+  reps: number;
+  setIndex: 1 | 2 | 3;
+};
+
+export type StrengthIncrementSettings = {
+  incrementLb: number; // e.g., 5
+  incrementKg: number; // e.g., 2.5
+};
+
+export type StrengthSuggestion = {
+  exerciseId: string;
+
+  // suggestion displayed in user unit
+  suggestedWeight: number | null;
+  unit: WeightUnit;
+
+  // reason/debug for UI
+  reason:
+    | "NO_HISTORY"
+    | "LAST_NOT_COMPLETE_3_SETS"
+    | "HIT_3x12_INCREASE"
+    | "NOT_YET_3x12_KEEP";
+  basedOn?: {
+    lastWeightKg: number;
+    lastReps: [number, number, number];
+    performedAt: Date;
+  };
+};
+
+// -----------------------------
+// Helpers
+// -----------------------------
+
+export function clampInt(n: number, min: number, max: number): number {
+  if (!Number.isFinite(n)) return min;
+  return Math.max(min, Math.min(max, Math.trunc(n)));
+}
+
+export function roundTo(n: number, decimals: number): number {
+  const p = Math.pow(10, decimals);
+  return Math.round(n * p) / p;
+}
+
+export function mphTenthsToNumber(tenths: number): number {
+  return roundTo(tenths / 10, 1);
+}
+
+export function mphNumberToTenths(mph: number): number {
+  // Enforce one decimal place max
+  const v = roundTo(mph, 1);
+  return clampInt(Math.round(v * 10), 0, 9999); // 0.0–999.9
+}
+
+export function daysBetween(a: Date, b: Date): number {
+  const ms = b.getTime() - a.getTime();
+  // floor to whole days; you can swap to Math.round if preferred
+  return Math.floor(ms / (1000 * 60 * 60 * 24));
+}
+
+// Weight conversions
+export const LB_PER_KG = 2.2046226218;
+
+export function kgToLb(kg: number): number {
+  return kg * LB_PER_KG;
+}
+
+export function lbToKg(lb: number): number {
+  return lb / LB_PER_KG;
+}
+
+// Display rounding: for strength weights, allow decimals.
+export function formatWeightForUnit(weight: number, unit: WeightUnit): number {
+  // Common plate increments: LB often 0.5 or 1, KG often 0.25 or 0.5.
+  // Keep flexible; round to 0.5 for LB and 0.25 for KG by default.
+  const step = unit === "LB" ? 0.5 : 0.25;
+  return roundTo(Math.round(weight / step) * step, 3);
+}
+
+// -----------------------------
+// Golf PR algorithms
+// -----------------------------
+
+/**
+ * Compute PR summary for Driver Max Dominant and/or Light Normal Dominant.
+ * Input is a list of sessions (already filtered to a user) ordered or unordered.
+ * Skips allowed: metric may be undefined for a session.
+ */
+export function computeGolfPRSummaries(
+  sessions: GolfSessionMetrics[],
+  n = 7
+): GolfPRSummary[] {
+  const metrics: Array<{
+    key: GolfMetricKey;
+    pick: (s: GolfSessionMetrics) => number | undefined;
+  }> = [
+    { key: "DRIVER_MAX_DOMINANT", pick: (s) => s.driverMaxDominant },
+    { key: "LIGHT_NORMAL_DOMINANT", pick: (s) => s.lightNormalDominant },
+  ];
+
+  // Sort sessions newest -> oldest for last-N selection
+  const sorted = [...sessions].sort(
+    (a, b) => b.performedAt.getTime() - a.performedAt.getTime()
+  );
+
+  return metrics.map(({ key, pick }) => {
+    // All-time: max across all sessions that contain a value
+    let allTimeBest: number | null = null;
+    let allTimeBestDate: Date | null = null;
+
+    for (const s of sorted) {
+      const v = pick(s);
+      if (typeof v !== "number") continue;
+      if (allTimeBest === null || v > allTimeBest) {
+        allTimeBest = v;
+        allTimeBestDate = s.performedAt;
+      }
+    }
+
+    // Last N sessions that actually include the metric
+    const included: Array<{ date: Date; value: number }> = [];
+    for (const s of sorted) {
+      const v = pick(s);
+      if (typeof v !== "number") continue;
+      included.push({ date: s.performedAt, value: v });
+      if (included.length >= n) break;
+    }
+
+    let lastNBest: number | null = null;
+    let lastNBestDate: Date | null = null;
+
+    for (const x of included) {
+      if (lastNBest === null || x.value > lastNBest) {
+        lastNBest = x.value;
+        lastNBestDate = x.date;
+      }
+    }
+
+    // Span days across included sessions (oldest to newest)
+    let spanDays: number | null = null;
+    if (included.length >= 2) {
+      const newest = included[0].date; // because sorted newest->oldest
+      const oldest = included[included.length - 1].date;
+      spanDays = Math.max(0, daysBetween(oldest, newest));
+    } else if (included.length === 1) {
+      spanDays = 0;
+    }
+
+    return {
+      metric: key,
+      allTimeBestTenths: allTimeBest,
+      allTimeBestDate,
+      lastN: {
+        n,
+        includedSessions: included.length,
+        bestTenths: lastNBest,
+        bestDate: lastNBestDate,
+        spanDays,
+      },
+    };
+  });
+}
+
+/**
+ * Convenience: produces display-friendly values (mph numbers) for UI.
+ */
+export function golfPRSummaryToDisplay(summary: GolfPRSummary): {
+  metric: GolfMetricKey;
+  allTimeBestMph: number | null;
+  lastNBestMph: number | null;
+  spanDays: number | null;
+  includedSessions: number;
+} {
+  return {
+    metric: summary.metric,
+    allTimeBestMph:
+      summary.allTimeBestTenths === null
+        ? null
+        : mphTenthsToNumber(summary.allTimeBestTenths),
+    lastNBestMph:
+      summary.lastN.bestTenths === null
+        ? null
+        : mphTenthsToNumber(summary.lastN.bestTenths),
+    spanDays: summary.lastN.spanDays,
+    includedSessions: summary.lastN.includedSessions,
+  };
+}
+
+// -----------------------------
+// Strength progression algorithms (3x8–12 double progression)
+// -----------------------------
+
+/**
+ * Groups sets by exercise and by session date to find the most recent "complete" 3-set performance.
+ * You should pass only sets for a single user.
+ */
+export function suggestNextWeightForExercise(params: {
+  exerciseId: string;
+  sets: StrengthSet[]; // all sets for this user+exercise (or all user sets; we filter)
+  userUnit: WeightUnit;
+  increments: StrengthIncrementSettings;
+}): StrengthSuggestion {
+  const { exerciseId, sets, userUnit, increments } = params;
+
+  // Filter for the exercise
+  const exSets = sets
+    .filter((s) => s.exerciseId === exerciseId)
+    .sort((a, b) => b.performedAt.getTime() - a.performedAt.getTime());
+
+  if (exSets.length === 0) {
+    return {
+      exerciseId,
+      suggestedWeight: null,
+      unit: userUnit,
+      reason: "NO_HISTORY",
+    };
+  }
+
+  // Find the most recent date where we have setIndex 1,2,3.
+  // If you store strengthSessionId, grouping by that is even better.
+  // Here we approximate by performedAt day+time equality (caller can pre-group).
+  // Recommended: pass in sets that include strengthSessionId and group by it instead.
+  type Bucket = {
+    performedAt: Date;
+    weightKgBySet: Map<number, number>;
+    repsBySet: Map<number, number>;
+  };
+
+  const buckets: Bucket[] = [];
+  const byTimestamp = new Map<number, Bucket>();
+
+  for (const s of exSets) {
+    const t = s.performedAt.getTime();
+    let b = byTimestamp.get(t);
+    if (!b) {
+      b = {
+        performedAt: s.performedAt,
+        weightKgBySet: new Map(),
+        repsBySet: new Map(),
+      };
+      byTimestamp.set(t, b);
+      buckets.push(b);
+    }
+    b.weightKgBySet.set(s.setIndex, s.weightKg);
+    b.repsBySet.set(s.setIndex, s.reps);
+  }
+
+  // Sort buckets newest->oldest
+  buckets.sort((a, b) => b.performedAt.getTime() - a.performedAt.getTime());
+
+  const last = buckets.find(
+    (b) =>
+      b.repsBySet.has(1) &&
+      b.repsBySet.has(2) &&
+      b.repsBySet.has(3) &&
+      b.weightKgBySet.has(1) &&
+      b.weightKgBySet.has(2) &&
+      b.weightKgBySet.has(3)
+  );
+
+  if (!last) {
+    return {
+      exerciseId,
+      suggestedWeight: null,
+      unit: userUnit,
+      reason: "LAST_NOT_COMPLETE_3_SETS",
+    };
+  }
+
+  // Use the (common) weight; if user varied by set, use set 1 as baseline.
+  const lastWeightKg = last.weightKgBySet.get(1)!;
+  const reps1 = last.repsBySet.get(1)!;
+  const reps2 = last.repsBySet.get(2)!;
+  const reps3 = last.repsBySet.get(3)!;
+
+  const hit3x12 = reps1 >= 12 && reps2 >= 12 && reps3 >= 12;
+
+  const inc =
+    userUnit === "LB" ? increments.incrementLb : increments.incrementKg;
+
+  // Compute suggested weight in user unit, then normalize to display rounding.
+  let suggestedInUnit: number;
+
+  if (hit3x12) {
+    const lastInUnit = userUnit === "LB" ? kgToLb(lastWeightKg) : lastWeightKg;
+    suggestedInUnit = lastInUnit + inc;
+
+    suggestedInUnit = formatWeightForUnit(suggestedInUnit, userUnit);
+
+    return {
+      exerciseId,
+      suggestedWeight: suggestedInUnit,
+      unit: userUnit,
+      reason: "HIT_3x12_INCREASE",
+      basedOn: {
+        lastWeightKg,
+        lastReps: [reps1, reps2, reps3],
+        performedAt: last.performedAt,
+      },
+    };
+  }
+
+  // Not 3x12: keep same
+  const keepInUnit = userUnit === "LB" ? kgToLb(lastWeightKg) : lastWeightKg;
+  suggestedInUnit = formatWeightForUnit(keepInUnit, userUnit);
+
+  return {
+    exerciseId,
+    suggestedWeight: suggestedInUnit,
+    unit: userUnit,
+    reason: "NOT_YET_3x12_KEEP",
+    basedOn: {
+      lastWeightKg,
+      lastReps: [reps1, reps2, reps3],
+      performedAt: last.performedAt,
+    },
+  };
+}
+
+/**
+ * Suggest next weights for all exercises in a session/day.
+ * Provide the list of exerciseIds for that day and the user's historical sets.
+ */
+export function suggestNextWeightsForExercises(params: {
+  exerciseIds: string[];
+  allSets: StrengthSet[];
+  userUnit: WeightUnit;
+  increments: StrengthIncrementSettings;
+}): StrengthSuggestion[] {
+  const { exerciseIds, allSets, userUnit, increments } = params;
+
+  return exerciseIds.map((exerciseId) =>
+    suggestNextWeightForExercise({
+      exerciseId,
+      sets: allSets,
+      userUnit,
+      increments,
+    })
+  );
+}
+
+// -----------------------------
+// Optional: validation utilities
+// -----------------------------
+
+export function validateGolfInputString(
+  raw: string
+): { ok: true; tenths: number } | { ok: false; error: string } {
+  const trimmed = raw.trim();
+
+  // Allow "" as not-entered
+  if (trimmed.length === 0) return { ok: false, error: "Empty input" };
+
+  // Accept forms like "102", "102.", "102.3"
+  if (!/^\d{1,3}(\.\d)?$/.test(trimmed)) {
+    return { ok: false, error: "Use 0–999 with up to 1 decimal (e.g., 102.3)" };
+  }
+
+  const mph = Number(trimmed);
+  if (!Number.isFinite(mph)) return { ok: false, error: "Invalid number" };
+  if (mph < 0 || mph > 999.9)
+    return { ok: false, error: "Out of range (0.0–999.9)" };
+
+  return { ok: true, tenths: mphNumberToTenths(mph) };
+}
+
+/**
+ * Convert a user-entered strength weight in their preferred unit into normalized kg.
+ */
+export function normalizeStrengthWeightToKg(
+  weightInput: number,
+  unit: WeightUnit
+): number {
+  if (!Number.isFinite(weightInput) || weightInput < 0) return 0;
+  return unit === "LB" ? lbToKg(weightInput) : weightInput;
+}
+
+

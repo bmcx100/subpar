@@ -1,0 +1,345 @@
+Full Requirements Specification (MVP)
+1. Product Scope
+
+A mobile-first web SaaS built with:
+
+Next.js (App Router)
+
+React
+
+Tailwind CSS
+
+shadcn/ui
+
+Auth.js (NextAuth) with Google login
+
+PostgreSQL + Prisma
+
+Audience: initially you; later paid SaaS for men 40+.
+
+Core focus:
+
+Golf swing speed (primary)
+
+Strength training with progressive overload (secondary)
+
+2. Authentication & SaaS Foundation
+Auth
+
+Google login (Auth.js)
+
+Persistent accounts
+
+Data tied to user ID
+
+SaaS readiness
+
+subscription_status field (trial default)
+
+No billing implementation yet
+
+Multi-user ready
+
+Future support: teams, coaches, friends
+
+3. Golf Module (SuperSpeed Level 1)
+3.1 Session Structure
+
+Guided protocol in this exact order:
+
+Block 1 – NORMAL
+
+Light (D, ND)
+
+Medium (D, ND)
+
+Heavy (D, ND)
+
+Block 2 – STEP
+
+Light (D, ND)
+
+Medium (D, ND)
+
+Heavy (D, ND)
+
+Block 3 – MAX NORMAL
+
+Light (D only)
+
+Block 4 – DRIVER
+
+Driver Max (D only)
+
+Total possible entries per session: 15
+
+3.2 Input Rules
+
+Manual entry only
+
+Numeric keypad with “.” button
+
+Speeds stored as 1 decimal max
+
+Range: 0.0–999.9 mph
+
+Stored internally as tenths integer
+
+Skip allowed per item
+
+Session may be saved if at least one value exists
+
+3.3 Guided Flow Behavior
+
+Shows current block header
+
+Shows “Next item”
+
+Shows progress indicator (e.g., 5/15)
+
+After saving a value:
+
+User must press Start 60s Rest
+
+Countdown runs
+
+End triggers sound + vibration (in-app only)
+
+Auto-advance to next item
+
+3.4 Dashboard Golf Metrics
+
+Primary metrics:
+
+1. Driver Max (Dominant)
+
+All-time PR
+
+Best of last 7 sessions (that include driver)
+
+Show “Last 7 = X days”
+
+2. Light Normal (Dominant)
+
+Same logic as above
+
+Only these two metrics matter for PR highlighting.
+
+3.5 PR Logic
+
+All-time max across all sessions
+
+Last-7 best = max across most recent 7 sessions containing that metric
+
+Span days = difference between oldest and newest in last-7 set
+
+4. Strength Module
+4.1 Routine Structure
+
+Users define:
+
+Sessions per week (default 3)
+
+Editable day labels (A, B, C)
+
+Sequential cycling:
+
+A → B → C → A
+
+Independent of calendar
+
+User may override day selection manually
+
+Missed sessions roll forward.
+
+4.2 Exercise Library
+
+Built-in default exercise list
+
+Users may create custom exercises
+
+Users can add multiple exercises per day
+
+Exercises reorderable
+
+4.3 Logging Structure
+
+Per exercise:
+
+3 sets
+
+Each set: weight + reps
+
+Optional notes
+
+Weights:
+
+Allow decimals
+
+Store internally in kg
+
+Default display unit: lb
+
+User can toggle lb/kg
+
+4.4 Progressive Overload Rule
+
+Double progression:
+
+If last completed session for exercise was:
+
+3 sets
+
+All reps ≥ 12
+
+Then:
+
+Suggest next weight = last weight + increment
+
+Otherwise:
+
+Suggest same weight
+
+No auto-deload.
+
+4.5 Increment Rules
+
+Defaults:
+
++5 lb
+
++2.5 kg
+
+User adjustable in Settings:
+
+increment_lb
+
+increment_kg
+
+5. Settings
+
+Unit toggle: lb / kg
+
+Increment lb input
+
+Increment kg input
+
+Timer sound toggle
+
+Timer vibration toggle
+
+6. UI/UX Requirements
+Mobile-first
+
+Large typography
+
+Minimal clutter
+
+One primary action per screen
+
+Numeric keypad for golf
+
+Navigation
+
+Dashboard
+
+Golf
+
+Strength
+
+Settings
+
+7. Data Model Requirements
+Golf
+
+GolfSession
+
+GolfValue
+
+Store:
+
+block
+
+stick
+
+side
+
+speed_mph_tenths
+
+Strength
+
+Routine
+
+RoutineDay
+
+Exercise
+
+RoutineDayExercise
+
+StrengthSession
+
+StrengthSet
+
+weight_kg
+
+reps
+
+setIndex
+
+User
+
+weight_unit
+
+increment_lb
+
+increment_kg
+
+timer_sound
+
+timer_vibrate
+
+subscription_status
+
+8. Non-Goals (Explicitly Not Included in MVP)
+
+No 1RM calculations
+
+No auto-deload
+
+No coaching logic beyond progression
+
+No push notifications
+
+No billing implementation
+
+No advanced analytics
+
+No wearables integration
+
+No ball speed tracking
+
+9. Future-Ready Architecture (Deferred)
+
+Teams
+
+Coaches
+
+Public profiles
+
+Stripe billing
+
+Advanced correlations (squat vs driver)
+
+Charts & analytics expansion
+
+Additional SuperSpeed protocols
+
+10. Behavioral Assumptions
+
+Speed sessions: ~3/week
+
+Strength sessions: ~3/week
+
+Target audience: men 40+
+
+Performance-first positioning

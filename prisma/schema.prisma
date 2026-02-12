@@ -1,0 +1,248 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum WeightUnit {
+  LB
+  KG
+}
+
+enum SubscriptionStatus {
+  trial
+  active
+  past_due
+  canceled
+}
+
+enum GolfBlock {
+  NORMAL
+  STEP
+  MAX_NORMAL
+  DRIVER
+}
+
+enum GolfStick {
+  LIGHT
+  MEDIUM
+  HEAVY
+  DRIVER
+}
+
+enum Side {
+  DOMINANT
+  NON_DOMINANT
+}
+
+// --------------------
+// Auth.js / NextAuth models (Prisma Adapter compatible)
+// --------------------
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String?  @unique
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // App settings / SaaS placeholders
+  weightUnit         WeightUnit         @default(LB)
+  incrementLb        Decimal            @default(5.0)  @db.Decimal(5, 2)
+  incrementKg        Decimal            @default(2.5)  @db.Decimal(5, 2)
+  timerSound         Boolean            @default(true)
+  timerVibrate       Boolean            @default(true)
+  subscriptionStatus SubscriptionStatus @default(trial)
+
+  accounts Account[]
+  sessions Session[]
+
+  golfSessions     GolfSession[]
+  routines         Routine[]
+  exercisesCreated Exercise[] @relation("ExercisesCreatedByUser")
+  strengthSessions StrengthSession[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// --------------------
+// Golf (SuperSpeed Level 1 MVP)
+// --------------------
+
+model GolfSession {
+  id          String   @id @default(cuid())
+  userId      String
+  performedAt DateTime @default(now())
+  notes       String?
+
+  user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  values GolfValue[]
+
+  @@index([userId, performedAt])
+}
+
+model GolfValue {
+  id        String    @id @default(cuid())
+  sessionId String
+  block     GolfBlock
+  stick     GolfStick
+  side      Side
+
+  // Store mph to 1 decimal place as tenths integer (e.g., 102.3 -> 1023)
+  speedMphTenths Int
+
+  session GolfSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  // Prevent duplicate entries for a given category in a session
+  @@unique([sessionId, block, stick, side])
+}
+
+// --------------------
+// Strength: routines + sessions
+// --------------------
+
+model Routine {
+  id              String   @id @default(cuid())
+  userId          String
+  name            String   @default("My Routine")
+  sessionsPerWeek Int      @default(3)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  days RoutineDay[]
+
+  @@index([userId])
+}
+
+model RoutineDay {
+  id         String   @id @default(cuid())
+  routineId  String
+  orderIndex Int
+  label      String   @default("Day")
+
+  routine  Routine              @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  entries  RoutineDayExercise[]
+  sessions StrengthSession[]
+
+  @@index([routineId, orderIndex])
+  @@unique([routineId, orderIndex])
+}
+
+model Exercise {
+  id              String   @id @default(cuid())
+  name            String
+  isDefault       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  createdByUserId String?
+  createdByUser   User?    @relation("ExercisesCreatedByUser", fields: [createdByUserId], references: [id], onDelete: SetNull)
+
+  routineEntries RoutineDayExercise[]
+  strengthSets   StrengthSet[]
+
+  @@index([name])
+  @@index([createdByUserId])
+  // Prevent duplicates for a user's custom exercises; defaults have createdByUserId = null
+  @@unique([createdByUserId, name])
+}
+
+model RoutineDayExercise {
+  id           String @id @default(cuid())
+  routineDayId String
+  exerciseId   String
+  orderIndex   Int
+
+  // Routine-defined targets
+  targetSets      Int?
+  targetReps      Int?
+  targetWeightKg  Decimal?  @db.Decimal(8, 3)
+  isBodyweight    Boolean   @default(false)
+
+  // Superset grouping
+  supersetGroupId String?
+
+  routineDay RoutineDay @relation(fields: [routineDayId], references: [id], onDelete: Cascade)
+  exercise   Exercise   @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@index([routineDayId, orderIndex])
+  @@unique([routineDayId, exerciseId])
+}
+
+model StrengthSession {
+  id           String   @id @default(cuid())
+  userId       String
+  routineDayId String?
+  performedAt  DateTime @default(now())
+  notes        String?
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  routineDay RoutineDay? @relation(fields: [routineDayId], references: [id], onDelete: SetNull)
+  sets       StrengthSet[]
+
+  @@index([userId, performedAt])
+  @@index([routineDayId])
+}
+
+model StrengthSet {
+  id                String  @id @default(cuid())
+  strengthSessionId String
+  exerciseId        String
+  setIndex          Int
+
+  // Store normalized weight in kg; convert for display based on user setting
+  weightKg Decimal @db.Decimal(8, 3)
+  reps     Int
+  notes    String?
+
+  strengthSession StrengthSession @relation(fields: [strengthSessionId], references: [id], onDelete: Cascade)
+  exercise        Exercise        @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@index([strengthSessionId])
+  @@index([exerciseId])
+  @@unique([strengthSessionId, exerciseId, setIndex])
+}

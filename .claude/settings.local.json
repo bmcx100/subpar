@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx prisma dev:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd /c \"taskkill /PID 6648 /F\")",
+      "Bash(cmd /c \"taskkill /PID 6648 /F 2>nul & exit /b 0\")",
+      "Bash(powershell -Command:*)",
+      "Bash(npm ls:*)",
+      "Bash(powershell -NoProfile -Command \"Start-Sleep -Seconds 3; netstat -ano | Select-String '':3000.*LISTENING''\")",
+      "Bash(powershell -NoProfile -Command:*)",
+      "Bash(npx prisma migrate dev:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx prisma db execute:*)",
+      "Bash(node -e:*)",
+      "Bash(npx tsx:*)",
+      "Bash(del \"D:\\\\1 Projects\\\\WebDev\\\\subpar\\\\scripts\\\\query-db.ts\")",
+      "Bash(cd:*)"
+    ]
+  }
+}
